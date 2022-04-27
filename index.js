@@ -1,4 +1,5 @@
-const excelToJson = require('convert-excel-to-json');
+const excelToJson = require('convert-excel-to-json'),
+fs = require('fs');
 
 const result = excelToJson({
     sourceFile: 'data/asp-upload.xlsx'
@@ -46,10 +47,12 @@ const createASPLocDef = (aspRow) => {
 	switch(geomType) {
 		case 'Point': {
 			geojsonType = 'Point';
+			// GeoJSON format.
 			geom = [
 				Number(aspRow['D'].replace(/\"/g, '').split(";")[0].split(",")[0]),
 				Number(aspRow['D'].replace(/\"/g, '').split(";")[0].split(",")[1])
 			];
+			// Lumada format.
 			lumadaGeom = [
 				{
 					x: Number(aspRow['D'].replace(/\"/g, '').split(";")[0].split(",")[0]),
@@ -158,4 +161,7 @@ let amqpInput = {
 	sourceSystem: 'uploader'
 }
 
-console.log(JSON.stringify(amqpInput,null, 3));
+let output = JSON.stringify(amqpInput,null, 3);
+
+console.log(output);
+fs.writeFileSync('data/output.json', output);
